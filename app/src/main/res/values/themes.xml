@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TaskTrackToDo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/shadeOfCyan</item>
+        <item name="colorPrimaryVariant">@color/shadeOfCyan</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/shadeOfCyan</item>
+        <item name="colorSecondaryVariant">@color/shadeOfCyan</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="Theme.TaskTrackToDo" parent="Base.Theme.TaskTrackToDo" />
+</resources>
