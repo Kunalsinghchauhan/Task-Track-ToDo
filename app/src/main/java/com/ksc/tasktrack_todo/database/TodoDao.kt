@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.ksc.tasktrack_todo.model.CardViewTask
 
+
 @Dao
 interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -16,12 +17,12 @@ interface TodoDao {
     @Update
     suspend fun update(todo: Todo)
 
-
     @Delete
     suspend fun delete(todo: Todo)
 
     @Query("SELECT * FROM todo_table")
     suspend fun getAllTask(): List<CardViewTask>
 
-
+    @Query("SELECT * FROM todo_table LIMIT 1 OFFSET :position")
+    suspend fun getTaskByPosition(position: Int): CardViewTask
 }

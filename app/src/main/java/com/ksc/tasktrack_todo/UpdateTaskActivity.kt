@@ -9,14 +9,15 @@ import androidx.room.Room
 import com.ksc.tasktrack_todo.database.Todo
 import com.ksc.tasktrack_todo.database.TodoDatabase
 import com.ksc.tasktrack_todo.databinding.ActivityUpdateTaskBinding
-import com.ksc.tasktrack_todo.model.DataObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.withContext
 
 class UpdateTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUpdateTaskBinding
     private lateinit var database: TodoDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateTaskBinding.inflate(layoutInflater)
@@ -27,50 +28,57 @@ class UpdateTaskActivity : AppCompatActivity() {
             "todo_table"
         ).build()
 
-        val position = intent.getIntExtra("id", -1)
-        if (position != -1) {
-            val title = DataObject.getData(position).title
-            val priority = DataObject.getData(position).priority
-            binding.etUpdateTaskTitle.setText(title)
-            binding.etUpdateTaskPriority.setText(priority)
+        var title = ""
+        var priority = ""
+        var priorityText = ""
+        var position = intent.getIntExtra("id", -1)
 
-            binding.btnUpdate.setOnClickListener {
-                DataObject.updateData(
-                    position,
-                    binding.etUpdateTaskTitle.text.toString(),
-                    binding.etUpdateTaskPriority.text.toString()
-                )
-                GlobalScope.launch {
-                    database.todoDao().update(
-                        Todo(
-                            position + 1, binding.etUpdateTaskTitle.text.toString(),
-                            binding.etUpdateTaskPriority.text.toString()
-                        )
-                    )
-                }
-                Toast.makeText(this, "Task Updated", Toast.LENGTH_SHORT).show()
-                myIntent()
-                finish()
-            }
-            binding.btnDelete.setOnClickListener {
-                DataObject.deleteData(position)
-                GlobalScope.launch {
-                    database.todoDao().delete(
-                        Todo(
-                            position + 1, binding.etUpdateTaskTitle.text.toString(),
-                            binding.etUpdateTaskPriority.text.toString()
-                        )
-                    )
-                }
-                myIntent()
-                finish()
+        GlobalScope.launch {
+            val task = database.todoDao().getTaskByPosition(position)
+            withContext(Dispatchers.Main) {
+                binding.etUpdateTaskTitle.setText(task.title)
+                binding.etUpdateTaskPriority.setText(task.priority)
             }
         }
+
+        binding.btnUpdate.setOnClickListener {
+            GlobalScope.launch {
+                database.todoDao().update(
+                    Todo(
+                        position + 1, binding.etUpdateTaskTitle.text.toString(),
+                        binding.etUpdateTaskPriority.text.toString(),
+                        priorityText
+                    )
+                )
+            }
+            Toast.makeText(this, "Task Updated", Toast.LENGTH_SHORT).show()
+            myIntent()
+            finish()
+        }
+        binding.btnDelete.setOnClickListener {
+            GlobalScope.launch {
+                database.todoDao().delete(
+                    Todo(
+                        position + 1, binding.etUpdateTaskTitle.text.toString(),
+                        binding.etUpdateTaskPriority.text.toString(),
+                        priorityText
+                    )
+                )
+                Log.i("kunall", "Update Position $position")
+            }
+            myIntent()
+            finish()
+        }
+
     }
 
     private fun myIntent() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        database.close()
+        GlobalScope.launch {  }.cancel()
     }
 }

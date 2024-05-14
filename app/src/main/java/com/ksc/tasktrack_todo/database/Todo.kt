@@ -8,5 +8,6 @@ data class Todo(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: String,
-    val priority: String
+    val priority: String,
+    val priorityText: String
 )

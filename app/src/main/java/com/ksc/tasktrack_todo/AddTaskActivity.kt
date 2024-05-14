@@ -1,6 +1,5 @@
 package com.ksc.tasktrack_todo
 
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +7,6 @@ import androidx.room.Room
 import com.ksc.tasktrack_todo.database.Todo
 import com.ksc.tasktrack_todo.database.TodoDatabase
 import com.ksc.tasktrack_todo.databinding.ActivityAddTaskBinding
-import com.ksc.tasktrack_todo.model.DataObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -33,9 +31,9 @@ class AddTaskActivity : AppCompatActivity() {
             ) {
                 val task = binding.etAddTaskTitle.text.toString()
                 val priority = binding.etAddTaskPriority.text.toString()
-                DataObject.setData(task, priority)
+                val priorityText = binding.etAddTaskPriority.text.toString()
                 GlobalScope.launch(Dispatchers.Main) {
-                    database.todoDao().insert(Todo(0, task, priority))
+                    database.todoDao().insert(Todo(0, task, priority, priorityText))
                 }
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
